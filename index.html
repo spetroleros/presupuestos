@@ -120,8 +120,9 @@ ol li{margin-bottom:6px}
     <div class="grid">
       <div>
         <div class="box">
-          <label for="pedido">Pegá el pedido de WhatsApp</label>
-          <textarea id="pedido" rows="4" placeholder="12 hierros del 8&#10;10 hierros del 6&#10;2 kg alambre para atar"></textarea>
+          <label for="pedido">Escribí o pegá el pedido</label>
+          <textarea id="pedido" rows="5" placeholder="Escribí un artículo por renglón, por ejemplo:&#10;12 hierros del 8&#10;6 chapas de 25 de 6.50&#10;2 kg alambre para atar"></textarea>
+          <div class="mut" style="margin-top:4px">Un artículo por renglón, con la cantidad adelante. Ctrl+Enter para armar.</div>
           <div class="row" style="margin-top:8px">
             <button id="btnDictar" hidden>🎤 Dictar</button>
             <button class="y" id="btnInterp">Armar presupuesto</button>
@@ -336,6 +337,7 @@ function interpretar(){
   if(!no.length)$('#pedido').value='';
 }
 $('#btnInterp').addEventListener('click',interpretar);
+$('#pedido').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();interpretar()}});
 
 /* ---------- dictado (gratis, del navegador) ---------- */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
