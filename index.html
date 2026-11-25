@@ -84,6 +84,23 @@ ol li{margin-bottom:6px}
 .ulist{width:100%;border-collapse:collapse}.ulist td,.ulist th{padding:10px 6px;border-bottom:1px solid var(--line);text-align:left}.ulist th{font-size:13px;color:var(--mut)}
 [hidden]{display:none!important}
 @media(max-width:600px){.ulist thead{display:none}.ulist tr{display:grid;padding:8px 0;border-bottom:1px solid var(--line)}.ulist td{border:0;padding:2px 0}}
+.hoja{display:none}
+@media print{
+  @page{size:A4;margin:14mm}
+  body>*:not(.hoja){display:none!important}
+  .hoja{display:block;color:#000;font:12pt/1.4 Archivo,Arial,sans-serif}
+}
+.hoja .hd{display:flex;justify-content:space-between;gap:20px;border-bottom:4px solid #00a36f;padding-bottom:10px}
+.hoja .marca{display:flex;gap:10px;align-items:center}.hoja .marca b{font:800 22pt Archivo,Arial,sans-serif;font-stretch:112%;color:#213b8b}
+.hoja .dc{font-size:10pt;color:#333;margin-top:4px}
+.hoja .nro{text-align:right}.hoja .nro div:first-child{font:800 16pt Archivo,Arial,sans-serif;color:#213b8b}
+.hoja .cli{margin:14px 0;padding:10px 12px;border:1px solid #bbb;border-radius:6px;font-size:11pt}
+.hoja table{width:100%;border-collapse:collapse;font-size:11pt}
+.hoja th{background:#213b8b;color:#fff;text-align:left;padding:6px 8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.hoja td{padding:6px 8px;border-bottom:1px solid #ccc}.hoja .n{text-align:right;white-space:nowrap}
+.hoja .tt{display:flex;justify-content:flex-end;margin-top:10px}.hoja .tt div{border-top:3px solid #00a36f;padding-top:6px;font:800 18pt Archivo,Arial,sans-serif;color:#213b8b}
+.hoja .pie{margin-top:24px;font-size:10pt;color:#333;border-top:1px solid #ccc;padding-top:8px}
+.hoja .marca svg,.hoja th,.hoja .hd{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .f2{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
 </style>
 </head>
@@ -155,7 +172,7 @@ ol li{margin-bottom:6px}
           <button id="btnCopiar" style="flex:1">Copiar texto</button>
           <button id="btnGuardar" class="pri" style="flex:1">Guardar</button>
         </div>
-        <div class="row" style="margin-bottom:16px"><button id="btnNuevo" style="flex:1">Empezar otro</button></div>
+        <div class="row" style="margin-bottom:16px"><button id="btnImprimir" style="flex:1">🖨️ Imprimir / PDF</button><button id="btnNuevo" style="flex:1">Empezar otro</button></div>
         <label>Mensaje</label>
         <div class="msg" id="msg">El mensaje aparece acá cuando cargues artículos.</div>
       </aside>
@@ -183,6 +200,22 @@ ol li{margin-bottom:6px}
       </ol>
       <div class="row"><button id="btnCopBm" class="pri">Copiar código</button><span class="mut" id="bmEstado"></span></div>
     </div>
+    <div class="box" id="corBox" hidden>
+      <h2 style="font-size:20px;margin-bottom:4px">Datos del corralón para imprimir</h2>
+      <p class="mut" style="margin-top:0">Aparecen arriba de cada presupuesto impreso.</p>
+      <form id="fCor" class="f2">
+        <div><label for="cNombre">Nombre comercial</label><input id="cNombre"></div>
+        <div><label for="cRazon">Razón social</label><input id="cRazon" placeholder="Ej: SPetroleros SAS"></div>
+        <div><label for="cCuit">CUIT</label><input id="cCuit" inputmode="numeric"></div>
+        <div><label for="cIva">Condición IVA</label><input id="cIva" placeholder="Ej: Responsable Inscripto"></div>
+        <div><label for="cDir">Dirección</label><input id="cDir"></div>
+        <div><label for="cLoc">Localidad</label><input id="cLoc"></div>
+        <div><label for="cTel">Teléfono / WhatsApp</label><input id="cTel" inputmode="tel"></div>
+        <div><label for="cEmail">Email</label><input id="cEmail" type="email"></div>
+        <div style="grid-column:1/-1"><label for="cPie">Nota al pie</label><input id="cPie"></div>
+        <div><button class="y" style="width:100%">Guardar datos</button></div>
+      </form>
+    </div>
   </section>
 
   <section id="v-usuarios" hidden>
@@ -205,6 +238,7 @@ ol li{margin-bottom:6px}
     </div>
   </section>
 </main>
+<div class="hoja" id="hoja"></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -249,7 +283,7 @@ $('#btnSalir').addEventListener('click',()=>salir(false));
 async function entrar(){
   yo=await rpc('yo',{p_token:token});
   $('#v-login').hidden=true;$('#app').hidden=false;$('#nav').hidden=false;$('#who').hidden=false;
-  $('#whoName').textContent=yo.nombre;$('#navUsu').hidden=yo.rol!=='admin';$('#syncBox').hidden=yo.rol!=='admin';
+  $('#whoName').textContent=yo.nombre;$('#navUsu').hidden=yo.rol!=='admin';$('#syncBox').hidden=yo.rol!=='admin';$('#corBox').hidden=yo.rol!=='admin';cargarCorralon();
   await cargarCatalogo();ver('nuevo');
 }
 
@@ -317,10 +351,10 @@ $('#res').addEventListener('click',e=>{const li=e.target.closest('li[data-i]');i
 
 /* ---------- clientes ---------- */
 let tCli=0;
-$('#cliente').addEventListener('input',e=>{ped.cliente=e.target.value;ped.clienteId='';guardarBorrador();clearTimeout(tCli);const q=e.target.value.trim();const ul=$('#resCli');if(q.length<2){ul.hidden=true;return}
+$('#cliente').addEventListener('input',e=>{ped.cliente=e.target.value;ped.clienteId='';ped.cliDet=null;guardarBorrador();clearTimeout(tCli);const q=e.target.value.trim();const ul=$('#resCli');if(q.length<2){ul.hidden=true;return}
   tCli=setTimeout(async()=>{try{const r=await rpc('clientes_buscar',{p_token:token,p_q:q});if($('#cliente').value.trim()!==q)return;ul._r=r;ul.hidden=!r.length;
     ul.innerHTML=r.map((c,i)=>`<li data-i="${i}"><span><b>${esc(c.nom)}</b><br><span class="mut">${esc([c.cuit,c.iva,c.tel].filter(Boolean).join(' · '))}</span></span></li>`).join('')}catch(x){}},250)});
-$('#resCli').addEventListener('click',e=>{const li=e.target.closest('li[data-i]');if(!li)return;const c=$('#resCli')._r[+li.dataset.i];ped.cliente=c.nom;ped.clienteId=c.id;const t=c.tel||(String(c.dir).match(/\d{10}/)||[''])[0];if(t)ped.tel=t;$('#resCli').hidden=true;$('#cliente').blur();render()});
+$('#resCli').addEventListener('click',e=>{const li=e.target.closest('li[data-i]');if(!li)return;const c=$('#resCli')._r[+li.dataset.i];ped.cliente=c.nom;ped.clienteId=c.id;ped.cliDet={cuit:c.cuit||'',iva:c.iva||'',dir:c.dir||''};const t=c.tel||(String(c.dir).match(/\d{10}/)||[''])[0];if(t)ped.tel=t;$('#resCli').hidden=true;$('#cliente').blur();render()});
 $('#tel').addEventListener('input',e=>{ped.tel=e.target.value;render()});
 
 /* ---------- interpretar ---------- */
@@ -352,12 +386,7 @@ if(SR){const b=$('#btnDictar');b.hidden=false;let rec=null,base='';
 /* ---------- acciones ---------- */
 $('#btnCopiar').addEventListener('click',async()=>{const m=textoWa();if(!m)return;try{await navigator.clipboard.writeText(m);toast('Texto copiado')}catch(e){toast('Seleccioná el mensaje y copialo')}});
 $('#btnNuevo').addEventListener('click',()=>{ped={id:null,lineas:[],cliente:'',clienteId:'',tel:''};$('#interpEstado').textContent='';render()});
-$('#btnGuardar').addEventListener('click',async()=>{if(!ped.lineas.length){toast('No hay artículos');return}
-  const b=$('#btnGuardar');b.disabled=true;
-  try{const total=ped.lineas.reduce((a,l)=>a+l.cant*l.precio,0);
-    ped.id=await rpc('presupuesto_guardar',{p_token:token,p:{id:ped.id,cliente:ped.cliente,clienteId:ped.clienteId,tel:ped.tel,total,lineas:ped.lineas.map(({id,cod,nom,cant,precio,pedido})=>({id,cod,nom,cant,precio,pedido:pedido||''}))}});
-    toast('Guardado '+ped.id);render()}catch(e){toast(err(e))}
-  b.disabled=false});
+$('#btnGuardar').addEventListener('click',async()=>{const b=$('#btnGuardar');b.disabled=true;await guardar(false);b.disabled=false});
 
 /* ---------- historial ---------- */
 let hist=[];
@@ -384,6 +413,25 @@ $('#fMiClave').addEventListener('submit',async e=>{e.preventDefault();try{const 
 /* ---------- favorito de sincronización ---------- */
 const BM='javascript:'+encodeURIComponent(`(async()=>{if(!/dydsoft/.test(location.host)){alert('Abrí D&D Soft primero');return}const SB='${SB}',K='${KEY}';const d=document.createElement('div');d.style.cssText='position:fixed;inset:20px;z-index:99999;background:#fff;border:4px solid #00a36f;border-radius:12px;padding:20px;font:17px sans-serif;display:flex;flex-direction:column;gap:12px;max-width:420px;margin:auto;height:max-content';d.innerHTML='<b style=color:#213b8b;font-size:22px>Actualizar precios SP</b><input id=spu placeholder=Usuario style=font-size:17px;padding:10px><input id=spc type=password placeholder=Clave style=font-size:17px;padding:10px><button id=spb style=font-size:18px;padding:12px;background:#00a36f;color:#fff;border:0;border-radius:8px>Actualizar</button><div id=spm></div><button id=spx style=padding:8px>Cerrar</button>';document.body.appendChild(d);const m=d.querySelector('#spm');d.querySelector('#spx').onclick=()=>d.remove();const call=(f,a)=>fetch(SB+'/rest/v1/rpc/'+f,{method:'POST',headers:{apikey:K,'Content-Type':'application/json'},body:JSON.stringify(a)}).then(async r=>{const j=await r.json().catch(()=>null);if(!r.ok)throw new Error(j&&j.message||'ERROR');return j});d.querySelector('#spb').onclick=async()=>{try{m.textContent='Ingresando...';const l=await call('login',{p_usuario:d.querySelector('#spu').value,p_clave:d.querySelector('#spc').value});const B=location.href.replace(/index\\.php.*$/,'').replace(/[^/]*$/,'');const N=s=>parseFloat(String(s).replace(/[$\\s.]/g,'').replace(',','.'))||0;const P=new Map(),C=new Map();const get=u=>fetch(B+u,{credentials:'include'}).then(r=>r.text());const all=async(mo,fn)=>{const r0=await get('index.php?module='+mo+'&action=index&start=1');if(/Ingreso al Sistema/.test(r0))throw new Error('Entrá a D&D Soft con tu usuario primero');const n=+((r0.match(/de\\s*(\\d+)/)||[0,1])[1]);const one=async p=>{const r=p==1?r0:await get('index.php?module='+mo+'&action=index&start='+p);fn(new DOMParser().parseFromString(r,'text/html'))};const ps=[...Array(n)].map((_,i)=>i+1);for(let i=0;i<ps.length;i+=8){await Promise.all(ps.slice(i,i+8).map(one));m.textContent='Leyendo '+(mo=='Products'?'artículos':'clientes')+'... '+Math.min(i+8,n)+'/'+n}};await all('Products',doc=>{for(const tr of doc.querySelectorAll('tr')){const a=tr.querySelector('a[href*="module=Products"][href*="record="]');const c=[...tr.children].filter(x=>x.tagName=='TD').map(t=>t.innerText.trim());if(!a||c.length<6)continue;const pc=c.filter(x=>/^\\$/.test(x));if(pc.length<2)continue;const i=c.indexOf(pc[0]);const id=a.getAttribute('href').match(/record=(\\d+)/)[1];P.set(id,[id,c[i-4],c[i-3],c[i-2],N(c[i-1]),N(pc[0]),N(pc[1])])}});await all('Accounts',doc=>{for(const tr of doc.querySelectorAll('tr')){const a=tr.querySelector('a[href*="module=Accounts"][href*="record="]');const c=[...tr.children].filter(x=>x.tagName=='TD').map(t=>t.innerText.trim());if(!a||c.length<6)continue;const id=a.getAttribute('href').match(/record=(\\d+)/)[1];C.set(id,[id,c[0],c[1],c[3],c[4],c[5]])}});m.textContent='Guardando...';const r=await call('sync_cargar',{p_token:l.token,p:{p:[...P.values()],c:[...C.values()]}});await call('logout',{p_token:l.token});m.innerHTML='<b style=color:#00a36f>Listo: '+r.productos+' artículos y '+r.clientes+' clientes actualizados.</b>'}catch(e){m.innerHTML='<b style=color:#c62828>'+({DATOS_INCORRECTOS:'Usuario o clave incorrectos',SOLO_ADMIN:'Solo un administrador puede actualizar'}[e.message]||e.message)+'</b>'}}})()`);
 $('#btnCopBm').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(BM);$('#bmEstado').textContent='Código copiado. Seguí el paso 1.'}catch(e){$('#bmEstado').textContent='No pude copiar automáticamente.'}});
+
+/* ---------- datos del corralón e impresión ---------- */
+let cor={};const CF=[['cNombre','nombre'],['cRazon','razon'],['cCuit','cuit'],['cIva','iva'],['cDir','direccion'],['cLoc','localidad'],['cTel','telefono'],['cEmail','email'],['cPie','pie']];
+async function cargarCorralon(){try{cor=await rpc('corralon_get',{p_token:token})||{}}catch(e){cor={}}CF.forEach(([i,k])=>$('#'+i).value=cor[k]||'')}
+$('#fCor').addEventListener('submit',async e=>{e.preventDefault();const v={};CF.forEach(([i,k])=>v[k]=$('#'+i).value.trim());try{await rpc('corralon_set',{p_token:token,p:v});cor=v;toast('Datos guardados')}catch(x){toast(err(x))}});
+async function guardar(silencioso){if(!ped.lineas.length){toast('No hay artículos');return false}
+  try{const total=ped.lineas.reduce((a,l)=>a+l.cant*l.precio,0);
+    ped.id=await rpc('presupuesto_guardar',{p_token:token,p:{id:ped.id,cliente:ped.cliente,clienteId:ped.clienteId,tel:ped.tel,total,lineas:ped.lineas.map(({id,cod,nom,cant,precio,pedido})=>({id,cod,nom,cant,precio,pedido:pedido||''}))}});
+    if(!silencioso)toast('Guardado '+ped.id);render();return true}catch(e){toast(err(e));return false}}
+$('#btnImprimir').addEventListener('click',async()=>{
+  const b=$('#btnImprimir');b.disabled=true;const ok=await guardar(true);b.disabled=false;if(!ok)return;
+  const L=ped.lineas.filter(l=>l.cant>0);const total=L.reduce((a,l)=>a+l.cant*l.precio,0);const d=ped.cliDet||{};
+  const linea=[cor.direccion,cor.localidad].filter(Boolean).join(' · ');const cont=[cor.telefono&&('Tel/WhatsApp '+cor.telefono),cor.email].filter(Boolean).join(' · ');const fis=[cor.razon,cor.cuit&&('CUIT '+cor.cuit),cor.iva].filter(Boolean).join(' · ');
+  $('#hoja').innerHTML=`<div class="hd"><div><div class="marca"><svg width="40" height="35" viewBox="0 0 34 30"><rect x="0" y="2" width="34" height="7" rx="3.5" fill="#00a36f"/><rect x="4" y="12" width="27" height="7" rx="3.5" fill="#00a36f"/><rect x="7" y="22" width="21" height="7" rx="3.5" fill="#00a36f"/></svg><b>${esc(cor.nombre||'SPetroleros')}</b></div>${fis?`<div class="dc">${esc(fis)}</div>`:''}${linea?`<div class="dc">${esc(linea)}</div>`:''}${cont?`<div class="dc">${esc(cont)}</div>`:''}</div><div class="nro"><div>PRESUPUESTO</div><div>N° ${esc(ped.id)}</div><div>Fecha: ${esc(new Date().toLocaleDateString('es-AR'))}</div><div class="dc">Atendió: ${esc(yo.nombre)}</div></div></div>
+  <div class="cli"><b>Cliente:</b> ${esc(ped.cliente||'Consumidor final')}${d.cuit?` · CUIT/DNI ${esc(d.cuit)}`:''}${d.iva?` · ${esc(d.iva)}`:''}${d.dir?`<br><b>Dirección:</b> ${esc(d.dir)}`:''}${ped.tel?`<br><b>Tel:</b> ${esc(ped.tel)}`:''}</div>
+  <table><thead><tr><th>Cód.</th><th>Artículo</th><th class="n">Cant.</th><th class="n">Precio unit.</th><th class="n">Subtotal</th></tr></thead><tbody>${L.map(l=>`<tr><td>${esc(l.cod)}</td><td>${esc(l.nom)}</td><td class="n">${esc(l.cant)}</td><td class="n">${fmt(l.precio)}</td><td class="n">${fmt(l.cant*l.precio)}</td></tr>`).join('')}</tbody></table>
+  <div class="tt"><div>TOTAL ${fmt(total)}</div></div>
+  ${cor.pie?`<div class="pie">${esc(cor.pie)}</div>`:''}`;
+  const t=document.title;document.title='Presupuesto '+ped.id+(ped.cliente?' - '+ped.cliente:'');setTimeout(()=>{window.print();document.title=t},150)});
 
 /* ---------- vistas ---------- */
 function ver(v){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));['nuevo','historial','datos','usuarios'].forEach(x=>$('#v-'+x).hidden=x!==v);
