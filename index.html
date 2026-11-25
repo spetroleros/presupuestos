@@ -143,6 +143,7 @@ ol li{margin-bottom:6px}
           <div class="row" style="margin-top:8px">
             <button id="btnDictar" hidden>🎤 Dictar</button>
             <button class="y" id="btnInterp">Armar presupuesto</button>
+            <button id="btnBorrar" style="margin-left:auto">✕ Borrar texto</button>
           </div>
           <div class="mut" id="interpEstado" style="margin-top:6px"></div>
           <details class="mut" style="margin-top:8px"><summary>¿Te llegó un audio?</summary>En WhatsApp mantené apretado el audio → <b>Transcribir</b>, copiá el texto y pegalo acá. O tocá <b>🎤 Dictar</b> y decí el pedido.</details>
@@ -371,6 +372,7 @@ function interpretar(){
   if(!no.length)$('#pedido').value='';
 }
 $('#btnInterp').addEventListener('click',interpretar);
+$('#btnBorrar').addEventListener('click',()=>{$('#pedido').value='';$('#interpEstado').textContent='';$('#pedido').focus()});
 $('#pedido').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();interpretar()}});
 
 /* ---------- dictado (gratis, del navegador) ---------- */
