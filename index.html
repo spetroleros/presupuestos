@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Presupuestos SPetroleros</title><meta name="theme-color" content="#213b8b"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,800&family=Archivo:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: mostrador de corralón — directo, rápido, cero vueltas.
+   IDEA: el talonario de presupuestos de SPetroleros, con las tres barras verdes del logo.
+   PICTURE: el presupuesto en armado es la imagen: renglones grandes, total enorme, botón verde de WhatsApp.
+   COLOUR and TYPE: colores de marca SPetroleros: azul #213b8b dominante, verde #00a36f de acento y envío, blanco. Archivo ancho 800 + Archivo.
+   LAYOUT: barra de búsqueda arriba, renglones al centro, total y envío pegados abajo en celular / columna derecha en PC. */
+:root{color-scheme:light dark;--bg:light-dark(#fff,#111315);--ink:light-dark(#121417,#eef0f2);--mut:light-dark(#5d646c,#9aa2ab);--line:light-dark(#e2e5e8,#2a2e33);--card:light-dark(#f5f6f7,#1a1d21);--y:#00a36f;--yi:#213b8b;--wa:#00a36f;--azul:light-dark(#213b8b,#8fa6ee);--bad:light-dark(#c62828,#ff6b6b)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif;overflow-x:clip}
+h1,h2,.big{font-family:Archivo,system-ui,sans-serif;font-stretch:112%;font-weight:800;letter-spacing:-.01em;line-height:1.05;margin:0}
+header{background:#213b8b;color:#fff;border-bottom:6px solid #00a36f;padding:14px max(4vw,14px);display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+header h1{font-size:22px}header h1{display:flex;align-items:center;gap:12px}header h1 b{color:#fff}header h1 span{font-weight:600;font-stretch:100%;opacity:.85}.logo{flex:none}
+nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+nav button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:9px 14px;font:600 15px Archivo,sans-serif;min-height:44px;cursor:pointer}
+nav button.on{background:#00a36f;color:#fff;border-color:#00a36f}
+main{max-width:1240px;margin:0 auto;padding:18px max(4vw,14px) 120px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:22px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+label{font-weight:600;font-size:14px;display:block;margin:0 0 6px}
+input,textarea,select{font:16px Archivo,sans-serif;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-height:44px}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:3px solid #00a36f;outline-offset:1px;border-color:var(--azul)}
+textarea{resize:vertical}
+button{font:600 15px Archivo,sans-serif;min-height:44px;border-radius:10px;padding:10px 16px;cursor:pointer;border:2px solid var(--ink);background:var(--bg);color:var(--ink)}
+button.pri{background:#213b8b;border-color:#213b8b;color:#fff}
+button.y{background:#00a36f;border-color:#00a36f;color:#fff}
+button:disabled{opacity:.45;cursor:default}
+.wa{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--wa);color:#fff;border:0;border-radius:10px;min-height:52px;font:800 17px Archivo,sans-serif;text-decoration:none;width:100%}
+.wa[aria-disabled=true]{opacity:.45;pointer-events:none}
+.box{background:var(--card);border-radius:14px;padding:16px;margin-bottom:16px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mut{color:var(--mut);font-size:14px}
+.res{list-style:none;margin:6px 0 0;padding:0;border:2px solid var(--line);border-radius:10px;max-height:320px;overflow:auto;background:var(--bg)}
+.res li{padding:10px 12px;border-bottom:1px solid var(--line);display:flex;gap:10px;cursor:pointer;align-items:baseline}
+.res li:hover,.res li.act{background:var(--card)}
+.res .p{margin-left:auto;font-weight:600;white-space:nowrap}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 7px;border-radius:5px;background:var(--line);white-space:nowrap}
+.tag.y{background:#00a36f;color:#fff;white-space:normal;display:inline}.tag.bad{background:var(--bad);color:#fff}
+.lines{width:100%;border-collapse:collapse;table-layout:fixed}.lines th:nth-child(2){width:84px}.lines th:nth-child(3){width:128px}.lines th:nth-child(4){width:112px}.lines th:nth-child(5){width:60px}.lines th:nth-child(6){width:44px}.lines td.nm{overflow-wrap:anywhere}.lines .nota{display:block;margin-top:4px;font-size:13px;color:light-dark(#007a53,#4fd6a4)}
+.lines th{font-size:13px;text-align:left;color:var(--mut);font-weight:600;padding:6px 6px;border-bottom:2px solid var(--azul)}
+.lines td{padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.lines .n{text-align:right;white-space:nowrap}
+.lines input{min-height:40px;padding:6px 8px;text-align:right}
+.qty,.pr{width:100%}@media(max-width:600px){.qty{width:76px}.pr{width:120px}}
+.x{border:0;background:transparent;color:var(--mut);font-size:22px;padding:4px 10px}
+@media(max-width:600px){.lines thead{display:none}.lines tr{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:10px 0;border-bottom:1px solid var(--line)}.lines td{border:0;padding:2px 0}.lines td.nm{grid-column:1/-1}.lines td.st{display:none}}
+.tot{border-top:4px solid #00a36f;padding-top:12px;margin-top:6px}
+.tot .big{color:var(--azul);font-size:clamp(34px,6vw,46px);white-space:nowrap}
+.msg{white-space:pre-wrap;font:14px/1.45 ui-monospace,Menlo,monospace;background:var(--bg);border:2px dashed var(--line);border-radius:10px;padding:12px;max-height:260px;overflow:auto}
+.btnlike{display:inline-flex;align-items:center;margin:0;font:600 15px Archivo,sans-serif;min-height:44px;border-radius:10px;padding:10px 16px;cursor:pointer;border:2px solid var(--ink);background:var(--bg)}
+.btnlike.off{opacity:.45;pointer-events:none}
+#btnDictar.rec{background:#c62828;border-color:#c62828;color:#fff}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.thumbs:empty{display:none}
+.thumbs div{position:relative}.thumbs img{width:84px;height:84px;object-fit:cover;border-radius:8px;border:2px solid var(--line);display:block}
+.thumbs button{position:absolute;top:-8px;right:-8px;min-height:28px;width:28px;padding:0;border-radius:50%;font-size:16px;line-height:1}
+.drag{outline:3px dashed #00a36f}
+summary{cursor:pointer;min-height:32px}
+.empty{border:2px dashed var(--line);border-radius:14px;padding:28px;text-align:center;color:var(--mut)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:10px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+.hist{width:100%;border-collapse:collapse}.hist td,.hist th{padding:10px 6px;border-bottom:1px solid var(--line);text-align:left}.hist th{font-size:13px;color:var(--mut)}
+.scroll{overflow-x:auto}
+pre{overflow-x:auto;white-space:pre-wrap;word-break:break-all;font-size:12px;background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:10px;max-height:160px}
+ol li{margin-bottom:6px}
+@media(max-width:600px){.hist thead{display:none}.hist tr{display:grid;padding:8px 0;border-bottom:1px solid var(--line)}.hist td{border:0;padding:2px 0}}
+</style>
+<style>
+.login{max-width:420px;margin:8vh auto;padding:0 16px}
+.login .box{padding:24px}
+.login h2{font-size:30px;margin-bottom:6px;color:var(--azul)}
+.login label{margin-top:14px}
+.err{color:var(--bad);font-weight:600;min-height:22px;margin-top:10px}
+.who{color:#fff;font-size:14px;opacity:.9;display:flex;gap:8px;align-items:center}
+.who button{min-height:36px;padding:6px 10px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.35);font-size:13px}
+.ulist{width:100%;border-collapse:collapse}.ulist td,.ulist th{padding:10px 6px;border-bottom:1px solid var(--line);text-align:left}.ulist th{font-size:13px;color:var(--mut)}
+[hidden]{display:none!important}
+@media(max-width:600px){.ulist thead{display:none}.ulist tr{display:grid;padding:8px 0;border-bottom:1px solid var(--line)}.ulist td{border:0;padding:2px 0}}
+.f2{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+</style>
+</head>
+<body>
+<header>
+  <h1><svg class="logo" width="34" height="30" viewBox="0 0 34 30" aria-hidden="true"><rect x="0" y="2" width="34" height="7" rx="3.5" fill="#00a36f"/><rect x="4" y="12" width="27" height="7" rx="3.5" fill="#00a36f"/><rect x="7" y="22" width="21" height="7" rx="3.5" fill="#00a36f"/></svg><b>SPetroleros</b> <span>Presupuestos</span></h1>
+  <nav id="nav" hidden>
+    <button data-v="nuevo" class="on">Nuevo</button>
+    <button data-v="historial">Historial</button>
+    <button data-v="datos">Precios</button>
+    <button data-v="usuarios" id="navUsu" hidden>Usuarios</button>
+  </nav>
+  <div class="who" id="who" hidden><span id="whoName"></span><button id="btnSalir">Salir</button></div>
+</header>
+
+<section id="v-login" class="login" hidden>
+  <div class="box">
+    <h2 id="loginTit">Ingresar</h2>
+    <p class="mut" id="loginSub" style="margin:0">Usá tu usuario y clave.</p>
+    <form id="fLogin">
+      <div id="campoNombre" hidden><label for="lNombre">Tu nombre</label><input id="lNombre" autocomplete="name"></div>
+      <label for="lUsu">Usuario</label><input id="lUsu" autocomplete="username" autocapitalize="none" required>
+      <label for="lClave">Clave</label><input id="lClave" type="password" autocomplete="current-password" required minlength="6">
+      <div class="err" id="lErr"></div>
+      <button class="y" style="width:100%;margin-top:6px" id="lBtn">Ingresar</button>
+    </form>
+  </div>
+</section>
+
+<main id="app" hidden>
+  <div id="aviso" class="box mut" hidden></div>
+
+  <section id="v-nuevo">
+    <div class="grid">
+      <div>
+        <div class="box">
+          <label for="pedido">Pegá el pedido de WhatsApp</label>
+          <textarea id="pedido" rows="4" placeholder="12 hierros del 8&#10;10 hierros del 6&#10;2 kg alambre para atar"></textarea>
+          <div class="row" style="margin-top:8px">
+            <button id="btnDictar" hidden>🎤 Dictar</button>
+            <button class="y" id="btnInterp">Armar presupuesto</button>
+          </div>
+          <div class="mut" id="interpEstado" style="margin-top:6px"></div>
+          <details class="mut" style="margin-top:8px"><summary>¿Te llegó un audio?</summary>En WhatsApp mantené apretado el audio → <b>Transcribir</b>, copiá el texto y pegalo acá. O tocá <b>🎤 Dictar</b> y decí el pedido.</details>
+        </div>
+        <div class="box">
+          <label for="buscar">O buscá un artículo</label>
+          <input id="buscar" autocomplete="off" placeholder="Ej: chapa 25 6,5 · torsionado 8 · estructural 40x40">
+          <ul class="res" id="res" hidden></ul>
+        </div>
+        <div id="lineasWrap"></div>
+      </div>
+      <aside>
+        <div class="box">
+          <label for="cliente">Cliente</label>
+          <input id="cliente" autocomplete="off" placeholder="Nombre, razón social o CUIT">
+          <ul class="res" id="resCli" hidden></ul>
+          <label for="tel" style="margin-top:12px">WhatsApp del cliente</label>
+          <input id="tel" inputmode="tel" placeholder="299 412-3456">
+          <div class="tot">
+            <div class="mut">Total</div>
+            <div class="big" id="total">$0</div>
+            <div class="mut" id="totalSub"></div>
+          </div>
+        </div>
+        <a class="wa" id="btnWa" href="#" target="_blank" rel="noopener" aria-disabled="true">Enviar por WhatsApp</a>
+        <div class="row" style="margin:10px 0 16px">
+          <button id="btnCopiar" style="flex:1">Copiar texto</button>
+          <button id="btnGuardar" class="pri" style="flex:1">Guardar</button>
+        </div>
+        <div class="row" style="margin-bottom:16px"><button id="btnNuevo" style="flex:1">Empezar otro</button></div>
+        <label>Mensaje</label>
+        <div class="msg" id="msg">El mensaje aparece acá cuando cargues artículos.</div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="v-historial" hidden>
+    <div class="row" style="margin-bottom:12px">
+      <h2 style="font-size:28px">Historial</h2>
+      <input id="histBuscar" placeholder="Buscar por cliente, número o vendedor" style="max-width:320px;margin-left:auto">
+    </div>
+    <div id="histWrap"></div>
+  </section>
+
+  <section id="v-datos" hidden>
+    <h2 style="font-size:28px;margin-bottom:12px">Precios y clientes</h2>
+    <div class="box" id="datosInfo">Cargando…</div>
+    <div class="box" id="syncBox" hidden>
+      <h2 style="font-size:20px;margin-bottom:8px">Actualizar desde D&amp;D Soft</h2>
+      <p class="mut" style="margin-top:0">Hacelo cada vez que cambies precios. Trae artículos, precios, stock y clientes en menos de un minuto.</p>
+      <ol>
+        <li><b>Solo la primera vez:</b> tocá <b>Copiar código</b>. En Chrome apretá <b>Ctrl+D</b> (agregar favorito), tocá <b>Más…</b>, en <b>URL</b> borrá lo que hay y pegá el código. Nombre: <b>Actualizar precios SP</b>. Guardar.</li>
+        <li>Entrá a D&amp;D Soft con tu usuario.</li>
+        <li>Tocá el favorito <b>Actualizar precios SP</b>, poné tu usuario y clave de esta app, y esperá a que diga <b>Listo</b>.</li>
+      </ol>
+      <div class="row"><button id="btnCopBm" class="pri">Copiar código</button><span class="mut" id="bmEstado"></span></div>
+    </div>
+  </section>
+
+  <section id="v-usuarios" hidden>
+    <h2 style="font-size:28px;margin-bottom:12px">Usuarios</h2>
+    <div class="box"><div class="scroll"><table class="ulist"><thead><tr><th>Nombre</th><th>Usuario</th><th>Rol</th><th>Estado</th><th></th></tr></thead><tbody id="uBody"></tbody></table></div></div>
+    <div class="box">
+      <h2 style="font-size:20px;margin-bottom:10px">Agregar empleado</h2>
+      <form id="fUsu" class="f2">
+        <div><label for="uNombre">Nombre</label><input id="uNombre" required></div>
+        <div><label for="uUsu">Usuario</label><input id="uUsu" autocapitalize="none" required></div>
+        <div><label for="uClave">Clave (mín. 6)</label><input id="uClave" type="text" minlength="6" required></div>
+        <div><label for="uRol">Rol</label><select id="uRol"><option value="vendedor">Vendedor</option><option value="admin">Administrador</option></select></div>
+        <div style="align-self:end"><button class="y" style="width:100%">Agregar</button></div>
+      </form>
+      <p class="mut">El vendedor arma, guarda y envía presupuestos. El administrador además actualiza precios y maneja usuarios.</p>
+    </div>
+    <div class="box">
+      <h2 style="font-size:20px;margin-bottom:10px">Cambiar mi clave</h2>
+      <form id="fMiClave" class="row"><input id="miClave" type="password" minlength="6" placeholder="Clave nueva" autocomplete="new-password" style="max-width:260px" required><button class="pri">Cambiar</button></form>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+{
+const SB='https://ugmhxnunpbeqxnfyflaf.supabase.co', KEY='sb_publishable_WNo-ipuDjoRL-hcWBWvY7A_32vQ6w7a';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>'$'+Math.round(n).toLocaleString('es-AR');
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/(\d),(\d)/g,'$1.$2').replace(/(\d+)\.(\d*[1-9])0+(?!\d)/g,'$1.$2').replace(/(\d+)\.0+(?!\d)/g,'$1').replace(/n[°º]\s*/g,'n').replace(/\s+/g,' ').trim();
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2400)};
+const MSJ={DATOS_INCORRECTOS:'Usuario o clave incorrectos.',BLOQUEADO:'Demasiados intentos. Probá en 15 minutos.',CLAVE_CORTA:'La clave tiene que tener al menos 6 caracteres.',USUARIO_EXISTE:'Ese usuario ya existe.',SOLO_ADMIN:'Solo un administrador puede hacer esto.',YA_EXISTE:'Ya hay un administrador creado.',NO_A_VOS_MISMO:'No podés desactivarte a vos mismo.'};
+const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
+
+let token=ls.get('sp_token'), yo=null;
+async function rpc(fn,args={}){
+  const r=await fetch(SB+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify(args)});
+  const t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(e){}
+  if(!r.ok){const m=(j&&j.message)||'ERROR';if(m==='SESION_VENCIDA'){salir(true)}const e=new Error(m);e.code=m;throw e}
+  return j;
+}
+const err=e=>MSJ[e&&e.code]||'No se pudo completar. Revisá la conexión.';
+
+/* ---------- login ---------- */
+let modoInicial=false;
+async function mostrarLogin(){
+  $('#app').hidden=true;$('#nav').hidden=true;$('#who').hidden=true;$('#v-login').hidden=false;
+  try{modoInicial=!(await rpc('hay_usuarios'))}catch(e){modoInicial=false}
+  $('#campoNombre').hidden=!modoInicial;$('#lNombre').required=modoInicial;
+  $('#loginTit').textContent=modoInicial?'Crear administrador':'Ingresar';
+  $('#loginSub').textContent=modoInicial?'Primera vez: creá tu usuario de administrador. Después vas a poder agregar a tus empleados.':'Usá tu usuario y clave.';
+  $('#lBtn').textContent=modoInicial?'Crear y entrar':'Ingresar';
+  $('#lClave').autocomplete=modoInicial?'new-password':'current-password';
+}
+$('#fLogin').addEventListener('submit',async e=>{e.preventDefault();$('#lErr').textContent='';$('#lBtn').disabled=true;
+  try{const r=modoInicial?await rpc('crear_admin_inicial',{p_usuario:$('#lUsu').value,p_nombre:$('#lNombre').value,p_clave:$('#lClave').value}):await rpc('login',{p_usuario:$('#lUsu').value,p_clave:$('#lClave').value});
+    token=r.token;ls.set('sp_token',token);$('#lClave').value='';await entrar()}
+  catch(x){$('#lErr').textContent=err(x)}
+  $('#lBtn').disabled=false});
+function salir(vencida){if(token&&!vencida)rpc('logout',{p_token:token}).catch(()=>{});token=null;yo=null;ls.set('sp_token',null);mostrarLogin();if(vencida)toast('Tu sesión venció. Ingresá de nuevo.')}
+$('#btnSalir').addEventListener('click',()=>salir(false));
+
+async function entrar(){
+  yo=await rpc('yo',{p_token:token});
+  $('#v-login').hidden=true;$('#app').hidden=false;$('#nav').hidden=false;$('#who').hidden=false;
+  $('#whoName').textContent=yo.nombre;$('#navUsu').hidden=yo.rol!=='admin';$('#syncBox').hidden=yo.rol!=='admin';
+  await cargarCatalogo();ver('nuevo');
+}
+
+/* ---------- catálogo ---------- */
+let productos=[],syncInfo=null,nClientes=0;
+async function cargarCatalogo(){
+  try{const c=await rpc('catalogo',{p_token:token});productos=c.productos||[];syncInfo=c.sync;nClientes=c.nClientes||0;idx();render();renderInfo()}
+  catch(e){if(e.code!=='SESION_VENCIDA'){const a=$('#aviso');a.hidden=false;a.textContent='No pude cargar los precios. Revisá la conexión y recargá la página.'}}
+}
+function renderInfo(){const f=syncInfo&&syncInfo.fecha;
+  $('#datosInfo').innerHTML=`<b>${esc(productos.length)} artículos</b> y <b>${esc(nClientes)} clientes</b> cargados.<div class="mut">Última actualización desde D&amp;D Soft: ${f?esc(new Date(f).toLocaleString('es-AR',{dateStyle:'medium',timeStyle:'short'})):'—'}</div>`;
+  const vieja=f&&(Date.now()-new Date(f))>7*864e5;const av=$('#aviso');av.hidden=!vieja;if(vieja)av.textContent='Los precios tienen más de una semana.'+(yo&&yo.rol==='admin'?' Actualizalos desde "Precios".':' Avisale al administrador.')}
+
+/* ---------- búsqueda ---------- */
+const SIN=[[/\bhierros?\s+(del?\s+)?(\d+)\b/g,'torsionado $2mm'],[/\bfierros?\b/g,'hierro'],[/\bcanos?\b/g,'tubo'],[/\bestructural(es)?\b/g,'estructural'],[/\bchapas?\s+(de(l)?\s+)?(2[2-9]|30)\b/g,'chapa n$3'],[/\bde\s+(\d+(\.\d+)?)\s*(m|mts|metros)?\b/g,' $1'],[/\balambre (para|p\/)\s*atar\b/g,'alambre fraccionado n17'],[/\balambre (para|p\/)\s*en(c|co)nfrar\b/g,'alambre fraccionado n14'],[/\balambre (para|p\/)\s*encofrar\b/g,'alambre fraccionado n14'],[/(\d+)\s*x\s*(\d+)/g,'$1x$2']];
+const prep=q=>{let s=norm(q);for(const[r,t]of SIN)s=s.replace(r,t);return s};
+const idx=()=>productos.forEach(p=>{p._n=norm(p.nom).replace(/(\d+)\s*x\s*/g,'$1x').replace(/(\d)\s*mts?\b/g,'$1 ').replace(/(\d)m\b/g,'$1 ')});
+function buscar(q,max=12,exacto=false){
+  const s=prep(q);if(!s)return[];
+  const toks=s.split(/\s+/).filter(t=>t&&!['de','del','x','en','para','con','la','el','los','las','mm','kg','mts','m','y'].includes(t));
+  const out=[];
+  for(const p of productos){let sc=0,ok=true;
+    for(const t of toks){
+      if(p.cod===t){sc+=50;continue}
+      const num=/^\d+(\.\d+)?$/.test(t)||/^\d+x\d+/.test(t)||/^n\d+$/.test(t)||/^\d+mm$/.test(t);
+      const re=num?new RegExp('(^|[^\\d.])'+t.replace('.','\\.')+'(?![\\d])'):null;
+      if(num?re.test(p._n):p._n.includes(t))sc+=num?12:8;else if(t.length>3&&p._n.includes(t.slice(0,4)))sc+=3;else{ok=false;sc-=10}
+    }
+    if(sc>0&&(ok||!exacto))out.push([sc+(ok?20:0)+(p.stock>0?1:0),p]);
+  }
+  return out.sort((a,b)=>b[0]-a[0]).slice(0,max).map(x=>x[1]);
+}
+
+/* ---------- presupuesto ---------- */
+let ped={id:null,lineas:[],cliente:'',clienteId:'',tel:''};
+try{const d=JSON.parse(ls.get('sp_borrador')||'null');if(d&&Array.isArray(d.lineas))ped=d}catch(e){}
+const guardarBorrador=()=>ls.set('sp_borrador',JSON.stringify(ped));
+function agregar(p,cant=1,pedido=''){const ex=ped.lineas.find(l=>l.id===p.id);
+  if(ex&&pedido&&ex.pedido===pedido)ex.cant=cant;else if(ex)ex.cant+=cant;else ped.lineas.push({id:p.id,cod:p.cod,nom:p.nom,cant,precio:+p.precio,pedido});render()}
+function textoWa(){const L=ped.lineas.filter(l=>l.cant>0);if(!L.length)return'';const t=L.reduce((a,l)=>a+l.cant*l.precio,0);
+  return['Hola! Te paso el presupuesto 👇','',...L.map(l=>`▪️ ${l.cant} ${l.nom} x ${fmt(l.precio)} = ${fmt(l.cant*l.precio)}`),'',`💰 TOTAL: ${fmt(t)}`,'','Precios sujetos a stock. Cualquier consulta, a disposición!','SPetroleros – Barda del Medio'].join('\n')}
+function telWa(t){let d=String(t||'').replace(/\D/g,'');if(!d)return'';d=d.replace(/^0+/,'');if(d.startsWith('54')){d=d.slice(2);d=d.replace(/^9/,'')}d=d.replace(/^(\d{2,4})15(\d{6,8})$/,'$1$2');return d.length>=10?'549'+d:''}
+function render(){
+  const w=$('#lineasWrap');
+  if(!ped.lineas.length)w.innerHTML='<div class="empty">Todavía no hay artículos. Pegá el pedido o buscá arriba.</div>';
+  else w.innerHTML=`<div class="box"><table class="lines"><thead><tr><th>Artículo</th><th class="n">Cant.</th><th class="n">Precio</th><th class="n">Subtotal</th><th class="st n">Stock</th><th></th></tr></thead><tbody>${ped.lineas.map((l,i)=>{const p=productos.find(x=>x.id===l.id);const st=p?+p.stock:null;const warn=st!==null&&st<l.cant;return`<tr><td class="nm"><b>${esc(l.nom)}</b><div class="mut">Cód. ${esc(l.cod)}${l.pedido?' · pidió: “'+esc(l.pedido)+'”':''}</div></td><td class="n"><input class="qty" type="number" min="0" step="any" inputmode="decimal" data-i="${i}" data-f="cant" value="${esc(l.cant)}" aria-label="Cantidad"></td><td class="n"><input class="pr" type="number" min="0" step="any" inputmode="decimal" data-i="${i}" data-f="precio" value="${esc(l.precio)}" aria-label="Precio unitario"></td><td class="n"><b>${fmt(l.cant*l.precio)}</b></td><td class="st n">${st===null?'':`<span class="tag${warn?' bad':''}">${esc(st)}</span>`}</td><td><button class="x" data-del="${i}" aria-label="Quitar">×</button></td></tr>`}).join('')}</tbody></table></div>`;
+  const t=ped.lineas.reduce((a,l)=>a+l.cant*l.precio,0);$('#total').textContent=fmt(t);
+  const falta=ped.lineas.filter(l=>{const p=productos.find(x=>x.id===l.id);return p&&+p.stock<l.cant}).length;
+  $('#totalSub').textContent=ped.lineas.length?`${ped.lineas.length} artículo${ped.lineas.length>1?'s':''}${falta?` · ${falta} sin stock suficiente`:''}${ped.id?' · '+ped.id:''}`:'';
+  const msg=textoWa();$('#msg').textContent=msg||'El mensaje aparece acá cuando cargues artículos.';
+  const tw=telWa(ped.tel);const a=$('#btnWa');a.href=msg?(tw?`https://wa.me/${tw}?text=`:'https://wa.me/?text=')+encodeURIComponent(msg):'#';
+  a.setAttribute('aria-disabled',msg?'false':'true');a.textContent=tw?'Enviar por WhatsApp':'Enviar por WhatsApp (elegir contacto)';
+  if(document.activeElement!==$('#cliente'))$('#cliente').value=ped.cliente;if(document.activeElement!==$('#tel'))$('#tel').value=ped.tel;
+  guardarBorrador();
+}
+$('#lineasWrap').addEventListener('change',e=>{const i=e.target.dataset.i;if(i==null)return;ped.lineas[i][e.target.dataset.f]=parseFloat(String(e.target.value).replace(',','.'))||0;render()});
+$('#lineasWrap').addEventListener('click',e=>{const d=e.target.dataset.del;if(d!=null){ped.lineas.splice(+d,1);render()}});
+
+let sel=0;
+function listaRes(){const q=$('#buscar').value;const r=buscar(q);const ul=$('#res');if(!q.trim()){ul.hidden=true;return}ul.hidden=false;ul._r=r;sel=0;
+  ul.innerHTML=r.length?r.map((p,i)=>`<li data-i="${i}" class="${i?'':'act'}"><span><b>${esc(p.nom)}</b><br><span class="mut">Cód. ${esc(p.cod)} · stock ${esc(p.stock)}</span></span><span class="p">${fmt(p.precio)}</span></li>`).join(''):'<li class="mut">No encontré ese artículo. Probá con otra palabra o medida.</li>'}
+$('#buscar').addEventListener('input',listaRes);
+$('#buscar').addEventListener('keydown',e=>{const ul=$('#res');const r=ul._r||[];if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();sel=Math.max(0,Math.min(r.length-1,sel+(e.key==='ArrowDown'?1:-1)));[...ul.children].forEach((li,i)=>li.classList.toggle('act',i===sel))}else if(e.key==='Enter'&&r[sel]){agregar(r[sel]);$('#buscar').value='';ul.hidden=true}});
+$('#res').addEventListener('click',e=>{const li=e.target.closest('li[data-i]');if(!li)return;agregar($('#res')._r[+li.dataset.i]);$('#buscar').value='';$('#res').hidden=true;$('#buscar').focus()});
+
+/* ---------- clientes ---------- */
+let tCli=0;
+$('#cliente').addEventListener('input',e=>{ped.cliente=e.target.value;ped.clienteId='';guardarBorrador();clearTimeout(tCli);const q=e.target.value.trim();const ul=$('#resCli');if(q.length<2){ul.hidden=true;return}
+  tCli=setTimeout(async()=>{try{const r=await rpc('clientes_buscar',{p_token:token,p_q:q});if($('#cliente').value.trim()!==q)return;ul._r=r;ul.hidden=!r.length;
+    ul.innerHTML=r.map((c,i)=>`<li data-i="${i}"><span><b>${esc(c.nom)}</b><br><span class="mut">${esc([c.cuit,c.iva,c.tel].filter(Boolean).join(' · '))}</span></span></li>`).join('')}catch(x){}},250)});
+$('#resCli').addEventListener('click',e=>{const li=e.target.closest('li[data-i]');if(!li)return;const c=$('#resCli')._r[+li.dataset.i];ped.cliente=c.nom;ped.clienteId=c.id;const t=c.tel||(String(c.dir).match(/\d{10}/)||[''])[0];if(t)ped.tel=t;$('#resCli').hidden=true;$('#cliente').blur();render()});
+$('#tel').addEventListener('input',e=>{ped.tel=e.target.value;render()});
+
+/* ---------- interpretar ---------- */
+function interpretar(){
+  const txt=$('#pedido').value.trim();if(!txt)return;
+  if(!productos.length){toast('Todavía no hay precios cargados');return}
+  const no=[];
+  for(const raw of txt.split(/\n|;/)){const l=raw.trim();if(!l)continue;
+    const m=l.match(/^\s*[-•*▪️]*\s*(\d+(?:[.,]\d+)?)\s*(kg|kilos?|u|unid(?:ades)?|mts?)?\s*(.*)$/i);
+    const cant=m?parseFloat(m[1].replace(',','.')):1;const q=m?m[3]:l;
+    const p=buscar(q,1,true)[0];if(p)agregar(p,cant,l);else no.push(l)}
+  render();
+  $('#interpEstado').textContent=no.length?'No encontré: '+no.join(' · ')+'. Buscalo abajo con otras palabras.':'Listo, revisá cantidades y precios.';
+  if(!no.length)$('#pedido').value='';
+}
+$('#btnInterp').addEventListener('click',interpretar);
+
+/* ---------- dictado (gratis, del navegador) ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SR){const b=$('#btnDictar');b.hidden=false;let rec=null,base='';
+  b.addEventListener('click',()=>{if(rec){rec.stop();return}
+    rec=new SR();rec.lang='es-AR';rec.continuous=true;rec.interimResults=true;base=$('#pedido').value;if(base&&!base.endsWith('\n'))base+='\n';
+    rec.onresult=ev=>{let fin='',tmp='';for(let i=ev.resultIndex;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)fin+=t.trim()+'\n';else tmp+=t}base+=fin;$('#pedido').value=base+tmp};
+    rec.onend=()=>{rec=null;b.classList.remove('rec');b.textContent='🎤 Dictar'};
+    rec.onerror=ev=>{if(ev.error==='not-allowed')toast('Permití el micrófono para dictar')};
+    try{rec.start();b.classList.add('rec');b.textContent='⏹ Parar'}catch(e){rec=null}})}
+
+/* ---------- acciones ---------- */
+$('#btnCopiar').addEventListener('click',async()=>{const m=textoWa();if(!m)return;try{await navigator.clipboard.writeText(m);toast('Texto copiado')}catch(e){toast('Seleccioná el mensaje y copialo')}});
+$('#btnNuevo').addEventListener('click',()=>{ped={id:null,lineas:[],cliente:'',clienteId:'',tel:''};$('#interpEstado').textContent='';render()});
+$('#btnGuardar').addEventListener('click',async()=>{if(!ped.lineas.length){toast('No hay artículos');return}
+  const b=$('#btnGuardar');b.disabled=true;
+  try{const total=ped.lineas.reduce((a,l)=>a+l.cant*l.precio,0);
+    ped.id=await rpc('presupuesto_guardar',{p_token:token,p:{id:ped.id,cliente:ped.cliente,clienteId:ped.clienteId,tel:ped.tel,total,lineas:ped.lineas.map(({id,cod,nom,cant,precio,pedido})=>({id,cod,nom,cant,precio,pedido:pedido||''}))}});
+    toast('Guardado '+ped.id);render()}catch(e){toast(err(e))}
+  b.disabled=false});
+
+/* ---------- historial ---------- */
+let hist=[];
+async function cargarHist(){try{hist=await rpc('presupuestos_listar',{p_token:token})}catch(e){hist=[]}renderHist()}
+function renderHist(){const q=norm($('#histBuscar').value);const w=$('#histWrap');
+  const r=hist.filter(h=>!q||norm(h.cliente+' '+h.id+' '+(h.autor||'')).includes(q));
+  if(!r.length){w.innerHTML='<div class="empty">Sin presupuestos guardados todavía.</div>';return}
+  w.innerHTML=`<div class="scroll"><table class="hist"><thead><tr><th>Fecha</th><th>Número</th><th>Cliente</th><th class="n">Total</th><th>Estado</th><th></th></tr></thead><tbody>${r.map(h=>`<tr><td>${esc(new Date(h.fecha).toLocaleString('es-AR',{dateStyle:'short',timeStyle:'short'}))}<div class="mut">${esc(h.autor||'')}</div></td><td>${esc(h.id)}</td><td><b>${esc(h.cliente||'Sin nombre')}</b><div class="mut">${esc((h.lineas||[]).length)} artículos</div></td><td class="n"><b>${fmt(h.total||0)}</b></td><td><select data-est="${esc(h.id)}" aria-label="Estado">${['Enviado','Aceptado','Rechazado','Facturado'].map(s=>`<option${s===h.estado?' selected':''}>${s}</option>`).join('')}</select></td><td><div class="row"><button data-abrir="${esc(h.id)}">Abrir</button><button data-dup="${esc(h.id)}">Duplicar</button></div></td></tr>`).join('')}</tbody></table></div>`}
+$('#histBuscar').addEventListener('input',renderHist);
+$('#histWrap').addEventListener('click',e=>{const a=e.target.dataset.abrir,d=e.target.dataset.dup;const h=hist.find(x=>x.id===(a||d));if(!h)return;
+  ped={id:a?h.id:null,lineas:(h.lineas||[]).map(l=>{const p=productos.find(x=>x.id===l.id);return{...l,precio:d&&p?+p.precio:l.precio}}),cliente:h.cliente||'',clienteId:h.clienteId||'',tel:h.tel||''};render();ver('nuevo');if(d)toast('Copia con precios actualizados')});
+$('#histWrap').addEventListener('change',async e=>{const id=e.target.dataset.est;if(!id)return;try{await rpc('presupuesto_estado',{p_token:token,p_id:id,p_estado:e.target.value});const h=hist.find(x=>x.id===id);if(h)h.estado=e.target.value;toast('Estado actualizado')}catch(x){toast(err(x))}});
+
+/* ---------- usuarios ---------- */
+async function cargarUsuarios(){try{const u=await rpc('usuarios_listar',{p_token:token});
+  $('#uBody').innerHTML=u.map(x=>`<tr><td><b>${esc(x.nombre)}</b></td><td>${esc(x.usuario)}</td><td>${x.rol==='admin'?'Administrador':'Vendedor'}</td><td>${x.activo?'<span class="tag">Activo</span>':'<span class="tag bad">Inactivo</span>'}</td><td><div class="row"><button data-clave="${esc(x.id)}" data-n="${esc(x.nombre)}">Nueva clave</button>${x.usuario===yo.usuario?'':`<button data-act="${esc(x.id)}" data-v="${x.activo?'0':'1'}">${x.activo?'Desactivar':'Activar'}</button>`}</div></td></tr>`).join('')}catch(e){toast(err(e))}}
+$('#uBody').addEventListener('click',async e=>{const c=e.target.dataset.clave,a=e.target.dataset.act;
+  if(c){const fila=e.target.closest('td');if(fila.querySelector('form'))return;const f=document.createElement('form');f.className='row';f.style.marginTop='8px';f.innerHTML='<input type="text" minlength="6" required placeholder="Clave nueva" style="max-width:180px"><button class="pri">Guardar</button>';fila.append(f);f.querySelector('input').focus();
+    f.addEventListener('submit',async ev=>{ev.preventDefault();try{await rpc('usuario_clave',{p_token:token,p_id:c,p_clave:f.querySelector('input').value});toast('Clave cambiada para '+e.target.dataset.n);f.remove()}catch(x){toast(err(x))}})}
+  if(a){try{await rpc('usuario_activo',{p_token:token,p_id:a,p_activo:e.target.dataset.v==='1'});cargarUsuarios()}catch(x){toast(err(x))}}});
+$('#fUsu').addEventListener('submit',async e=>{e.preventDefault();try{await rpc('usuario_crear',{p_token:token,p_usuario:$('#uUsu').value,p_nombre:$('#uNombre').value,p_clave:$('#uClave').value,p_rol:$('#uRol').value});toast('Usuario creado. Pasale usuario y clave.');e.target.reset();cargarUsuarios()}catch(x){toast(err(x))}});
+$('#fMiClave').addEventListener('submit',async e=>{e.preventDefault();try{const me=await rpc('yo',{p_token:token});await rpc('usuario_clave',{p_token:token,p_id:me.id,p_clave:$('#miClave').value});toast('Clave cambiada');e.target.reset()}catch(x){toast(err(x))}});
+
+/* ---------- favorito de sincronización ---------- */
+const BM='javascript:'+encodeURIComponent(`(async()=>{if(!/dydsoft/.test(location.host)){alert('Abrí D&D Soft primero');return}const SB='${SB}',K='${KEY}';const d=document.createElement('div');d.style.cssText='position:fixed;inset:20px;z-index:99999;background:#fff;border:4px solid #00a36f;border-radius:12px;padding:20px;font:17px sans-serif;display:flex;flex-direction:column;gap:12px;max-width:420px;margin:auto;height:max-content';d.innerHTML='<b style=color:#213b8b;font-size:22px>Actualizar precios SP</b><input id=spu placeholder=Usuario style=font-size:17px;padding:10px><input id=spc type=password placeholder=Clave style=font-size:17px;padding:10px><button id=spb style=font-size:18px;padding:12px;background:#00a36f;color:#fff;border:0;border-radius:8px>Actualizar</button><div id=spm></div><button id=spx style=padding:8px>Cerrar</button>';document.body.appendChild(d);const m=d.querySelector('#spm');d.querySelector('#spx').onclick=()=>d.remove();const call=(f,a)=>fetch(SB+'/rest/v1/rpc/'+f,{method:'POST',headers:{apikey:K,'Content-Type':'application/json'},body:JSON.stringify(a)}).then(async r=>{const j=await r.json().catch(()=>null);if(!r.ok)throw new Error(j&&j.message||'ERROR');return j});d.querySelector('#spb').onclick=async()=>{try{m.textContent='Ingresando...';const l=await call('login',{p_usuario:d.querySelector('#spu').value,p_clave:d.querySelector('#spc').value});const B=location.href.replace(/index\\.php.*$/,'').replace(/[^/]*$/,'');const N=s=>parseFloat(String(s).replace(/[$\\s.]/g,'').replace(',','.'))||0;const P=new Map(),C=new Map();const get=u=>fetch(B+u,{credentials:'include'}).then(r=>r.text());const all=async(mo,fn)=>{const r0=await get('index.php?module='+mo+'&action=index&start=1');if(/Ingreso al Sistema/.test(r0))throw new Error('Entrá a D&D Soft con tu usuario primero');const n=+((r0.match(/de\\s*(\\d+)/)||[0,1])[1]);const one=async p=>{const r=p==1?r0:await get('index.php?module='+mo+'&action=index&start='+p);fn(new DOMParser().parseFromString(r,'text/html'))};const ps=[...Array(n)].map((_,i)=>i+1);for(let i=0;i<ps.length;i+=8){await Promise.all(ps.slice(i,i+8).map(one));m.textContent='Leyendo '+(mo=='Products'?'artículos':'clientes')+'... '+Math.min(i+8,n)+'/'+n}};await all('Products',doc=>{for(const tr of doc.querySelectorAll('tr')){const a=tr.querySelector('a[href*="module=Products"][href*="record="]');const c=[...tr.children].filter(x=>x.tagName=='TD').map(t=>t.innerText.trim());if(!a||c.length<6)continue;const pc=c.filter(x=>/^\\$/.test(x));if(pc.length<2)continue;const i=c.indexOf(pc[0]);const id=a.getAttribute('href').match(/record=(\\d+)/)[1];P.set(id,[id,c[i-4],c[i-3],c[i-2],N(c[i-1]),N(pc[0]),N(pc[1])])}});await all('Accounts',doc=>{for(const tr of doc.querySelectorAll('tr')){const a=tr.querySelector('a[href*="module=Accounts"][href*="record="]');const c=[...tr.children].filter(x=>x.tagName=='TD').map(t=>t.innerText.trim());if(!a||c.length<6)continue;const id=a.getAttribute('href').match(/record=(\\d+)/)[1];C.set(id,[id,c[0],c[1],c[3],c[4],c[5]])}});m.textContent='Guardando...';const r=await call('sync_cargar',{p_token:l.token,p:{p:[...P.values()],c:[...C.values()]}});await call('logout',{p_token:l.token});m.innerHTML='<b style=color:#00a36f>Listo: '+r.productos+' artículos y '+r.clientes+' clientes actualizados.</b>'}catch(e){m.innerHTML='<b style=color:#c62828>'+({DATOS_INCORRECTOS:'Usuario o clave incorrectos',SOLO_ADMIN:'Solo un administrador puede actualizar'}[e.message]||e.message)+'</b>'}}})()`);
+$('#btnCopBm').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(BM);$('#bmEstado').textContent='Código copiado. Seguí el paso 1.'}catch(e){$('#bmEstado').textContent='No pude copiar automáticamente.'}});
+
+/* ---------- vistas ---------- */
+function ver(v){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));['nuevo','historial','datos','usuarios'].forEach(x=>$('#v-'+x).hidden=x!==v);
+  if(v==='historial')cargarHist();if(v==='datos'){renderInfo();cargarCatalogo()}if(v==='usuarios')cargarUsuarios();window.scrollTo(0,0)}
+$('#nav').addEventListener('click',e=>{if(e.target.dataset.v)ver(e.target.dataset.v)});
+
+render();
+if(token)entrar().catch(()=>mostrarLogin());else mostrarLogin();
+}
+</script>
+</body>
+</html>
