@@ -264,7 +264,7 @@ function renderInfo(){const f=syncInfo&&syncInfo.fecha;
   const vieja=f&&(Date.now()-new Date(f))>7*864e5;const av=$('#aviso');av.hidden=!vieja;if(vieja)av.textContent='Los precios tienen más de una semana.'+(yo&&yo.rol==='admin'?' Actualizalos desde "Precios".':' Avisale al administrador.')}
 
 /* ---------- búsqueda ---------- */
-const SIN=[[/\bhierros?\s+(del?\s+)?(\d+)\b/g,'torsionado $2mm'],[/\bfierros?\b/g,'hierro'],[/\bcanos?\b/g,'tubo'],[/\bestructural(es)?\b/g,'estructural'],[/\bchapas?\s+(de(l)?\s+)?(2[2-9]|30)\b/g,'chapa n$3'],[/\bde\s+(\d+(\.\d+)?)\s*(m|mts|metros)?\b/g,' $1'],[/\balambre (para|p\/)\s*atar\b/g,'alambre fraccionado n17'],[/\balambre (para|p\/)\s*en(c|co)nfrar\b/g,'alambre fraccionado n14'],[/\balambre (para|p\/)\s*encofrar\b/g,'alambre fraccionado n14'],[/(\d+)\s*x\s*(\d+)/g,'$1x$2']];
+const SIN=[[/\bhierros?\s+(del?\s+)?(\d+)\b/g,'torsionado $2mm'],[/\bfierros?\b/g,'hierro'],[/\bcanos?\b/g,'tubo'],[/\bestructural(es)?\b/g,'estructural'],[/\bchapas?\s+(de(l)?\s+)?(2[2-9]|30)\b/g,'chapa n$3'],[/\bde\s+(\d+(\.\d+)?)\s*(m|mts|metros)?\b/g,' $1'],[/\balambre (para|p\/)\s*atar\b/g,'alambre fraccionado n17'],[/\balambre (para|p\/)\s*en(c|co)nfrar\b/g,'alambre fraccionado n14'],[/\balambre (para|p\/)\s*encofrar\b/g,'alambre fraccionado n14'],[/(\d+(?:\.\d+)?)\s*(m|mt|mts|metros?)\b/g,'$1'],[/(\d+)\s*x\s*(\d+)/g,'$1x$2']];
 const prep=q=>{let s=norm(q);for(const[r,t]of SIN)s=s.replace(r,t);return s};
 const idx=()=>productos.forEach(p=>{p._n=norm(p.nom).replace(/(\d+)\s*x\s*/g,'$1x').replace(/(\d)\s*mts?\b/g,'$1 ').replace(/(\d)m\b/g,'$1 ')});
 function buscar(q,max=12,exacto=false){
@@ -275,10 +275,10 @@ function buscar(q,max=12,exacto=false){
     for(const t of toks){
       if(p.cod===t){sc+=50;continue}
       const num=/^\d+(\.\d+)?$/.test(t)||/^\d+x\d+/.test(t)||/^n\d+$/.test(t)||/^\d+mm$/.test(t);
-      const re=num?new RegExp('(^|[^\\d.])'+t.replace('.','\\.')+'(?![\\d])'):null;
+      const re=num?new RegExp('(^|[^\\d.])'+t.replace('.','\\.')+'(?![\\d]|\\.\\d)'):null;
       if(num?re.test(p._n):p._n.includes(t))sc+=num?12:8;else if(t.length>3&&p._n.includes(t.slice(0,4)))sc+=3;else{ok=false;sc-=10}
     }
-    if(sc>0&&(ok||!exacto))out.push([sc+(ok?20:0)+(p.stock>0?1:0),p]);
+    if(sc>0&&(ok||!exacto)){p._sc=sc+(ok?20:0);out.push([p._sc+(p.stock>0?1:0)+(/acanalada galvanizada/.test(p._n)?.5:0),p])}
   }
   return out.sort((a,b)=>b[0]-a[0]).slice(0,max).map(x=>x[1]);
 }
@@ -295,7 +295,7 @@ function telWa(t){let d=String(t||'').replace(/\D/g,'');if(!d)return'';d=d.repla
 function render(){
   const w=$('#lineasWrap');
   if(!ped.lineas.length)w.innerHTML='<div class="empty">Todavía no hay artículos. Pegá el pedido o buscá arriba.</div>';
-  else w.innerHTML=`<div class="box"><table class="lines"><thead><tr><th>Artículo</th><th class="n">Cant.</th><th class="n">Precio</th><th class="n">Subtotal</th><th class="st n">Stock</th><th></th></tr></thead><tbody>${ped.lineas.map((l,i)=>{const p=productos.find(x=>x.id===l.id);const st=p?+p.stock:null;const warn=st!==null&&st<l.cant;return`<tr><td class="nm"><b>${esc(l.nom)}</b><div class="mut">Cód. ${esc(l.cod)}${l.pedido?' · pidió: “'+esc(l.pedido)+'”':''}</div></td><td class="n"><input class="qty" type="number" min="0" step="any" inputmode="decimal" data-i="${i}" data-f="cant" value="${esc(l.cant)}" aria-label="Cantidad"></td><td class="n"><input class="pr" type="number" min="0" step="any" inputmode="decimal" data-i="${i}" data-f="precio" value="${esc(l.precio)}" aria-label="Precio unitario"></td><td class="n"><b>${fmt(l.cant*l.precio)}</b></td><td class="st n">${st===null?'':`<span class="tag${warn?' bad':''}">${esc(st)}</span>`}</td><td><button class="x" data-del="${i}" aria-label="Quitar">×</button></td></tr>`}).join('')}</tbody></table></div>`;
+  else w.innerHTML=`<div class="box"><table class="lines"><thead><tr><th>Artículo</th><th class="n">Cant.</th><th class="n">Precio</th><th class="n">Subtotal</th><th class="st n">Stock</th><th></th></tr></thead><tbody>${ped.lineas.map((l,i)=>{const p=productos.find(x=>x.id===l.id);const st=p?+p.stock:null;const warn=st!==null&&st<l.cant;return`<tr><td class="nm"><b>${esc(l.nom)}</b><div class="mut">Cód. ${esc(l.cod)}${l.pedido?' · pidió: “'+esc(l.pedido)+'”':''}</div>${l.nota?'<span class="nota">↳ '+esc(l.nota)+'</span>':''}</td><td class="n"><input class="qty" type="number" min="0" step="any" inputmode="decimal" data-i="${i}" data-f="cant" value="${esc(l.cant)}" aria-label="Cantidad"></td><td class="n"><input class="pr" type="number" min="0" step="any" inputmode="decimal" data-i="${i}" data-f="precio" value="${esc(l.precio)}" aria-label="Precio unitario"></td><td class="n"><b>${fmt(l.cant*l.precio)}</b></td><td class="st n">${st===null?'':`<span class="tag${warn?' bad':''}">${esc(st)}</span>`}</td><td><button class="x" data-del="${i}" aria-label="Quitar">×</button></td></tr>`}).join('')}</tbody></table></div>`;
   const t=ped.lineas.reduce((a,l)=>a+l.cant*l.precio,0);$('#total').textContent=fmt(t);
   const falta=ped.lineas.filter(l=>{const p=productos.find(x=>x.id===l.id);return p&&+p.stock<l.cant}).length;
   $('#totalSub').textContent=ped.lineas.length?`${ped.lineas.length} artículo${ped.lineas.length>1?'s':''}${falta?` · ${falta} sin stock suficiente`:''}${ped.id?' · '+ped.id:''}`:'';
@@ -331,7 +331,7 @@ function interpretar(){
   for(const raw of txt.split(/\n|;/)){const l=raw.trim();if(!l)continue;
     const m=l.match(/^\s*[-•*▪️]*\s*(\d+(?:[.,]\d+)?)\s*(kg|kilos?|u|unid(?:ades)?|mts?)?\s*(.*)$/i);
     const cant=m?parseFloat(m[1].replace(',','.')):1;const q=m?m[3]:l;
-    const p=buscar(q,1,true)[0];if(p)agregar(p,cant,l);else no.push(l)}
+    const r=buscar(q,4,true);const p=r[0];if(p){agregar(p,cant,l);const alt=r.filter(x=>x!==p&&x._sc===p._sc);const ln=ped.lineas.find(x=>x.id===p.id);if(ln)ln.nota=alt.length?'También coincide: '+alt.map(x=>x.nom).join(' · ')+'. Si era otro, quitalo y buscalo abajo.':''}else no.push(l)}
   render();
   $('#interpEstado').textContent=no.length?'No encontré: '+no.join(' · ')+'. Buscalo abajo con otras palabras.':'Listo, revisá cantidades y precios.';
   if(!no.length)$('#pedido').value='';
