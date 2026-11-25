@@ -84,6 +84,8 @@ ol li{margin-bottom:6px}
 .ulist{width:100%;border-collapse:collapse}.ulist td,.ulist th{padding:10px 6px;border-bottom:1px solid var(--line);text-align:left}.ulist th{font-size:13px;color:var(--mut)}
 [hidden]{display:none!important}
 @media(max-width:600px){.ulist thead{display:none}.ulist tr{display:grid;padding:8px 0;border-bottom:1px solid var(--line)}.ulist td{border:0;padding:2px 0}}
+.fav{display:inline-flex;align-items:center;gap:8px;background:#213b8b;color:#fff;border-radius:10px;padding:12px 18px;font:800 17px Archivo,sans-serif;text-decoration:none;cursor:grab;border:3px dashed #00a36f}
+.fav:active{cursor:grabbing}
 .hoja{display:none}
 @media print{
   @page{size:A4;margin:14mm}
@@ -194,21 +196,21 @@ ol li{margin-bottom:6px}
     <div class="box">
       <h2 style="font-size:20px;margin-bottom:8px">Pasar presupuestos a D&amp;D Soft para facturar</h2>
       <ol>
-        <li><b>Solo la primera vez:</b> tocá <b>Copiar código</b>. En Chrome apretá <b>Ctrl+D</b>, tocá <b>Más…</b>, en <b>URL</b> borrá lo que hay y pegá el código. Nombre: <b>Pasar a D&amp;D</b>. Guardar.</li>
+        <li><b>Solo la primera vez:</b> con el mouse, <b>agarrá el botón azul de abajo y arrastralo hasta la barra de favoritos</b> de Chrome (la fila de arriba donde tenés tus carpetas). Soltalo ahí.<div style="margin:10px 0"><a class="fav" id="favDD" href="#">⭐ Pasar a D&amp;D</a></div></li>
         <li>Entrá a D&amp;D Soft y tocá el favorito <b>Pasar a D&amp;D</b>. La primera vez te pide usuario y clave de esta app.</li>
         <li>Elegí el presupuesto. Se abre el formulario de Presupuestos de D&amp;D ya completo: revisalo y tocá <b>Guardar</b>. Queda marcado <b>En D&amp;D</b> con su número, listo para facturar.</li>
       </ol>
-      <div class="row"><button id="btnCopDD" class="pri">Copiar código</button><span class="mut" id="ddEstado"></span></div>
+      <details class="mut"><summary>¿No podés arrastrarlo?</summary><div class="row" style="margin-top:6px"><button id="btnCopDD">Copiar código</button><span id="ddEstado"></span></div>Creá un favorito a mano (Cmd+D en Mac, Ctrl+D en Windows → Más…) y pegá el código en URL.</details>
     </div>
     <div class="box" id="syncBox" hidden>
       <h2 style="font-size:20px;margin-bottom:8px">Actualizar desde D&amp;D Soft</h2>
       <p class="mut" style="margin-top:0">Hacelo cada vez que cambies precios. Trae artículos, precios, stock y clientes en menos de un minuto.</p>
       <ol>
-        <li><b>Solo la primera vez:</b> tocá <b>Copiar código</b>. En Chrome apretá <b>Ctrl+D</b> (agregar favorito), tocá <b>Más…</b>, en <b>URL</b> borrá lo que hay y pegá el código. Nombre: <b>Actualizar precios SP</b>. Guardar.</li>
+        <li><b>Solo la primera vez:</b> arrastrá este botón a la barra de favoritos de Chrome:<div style="margin:10px 0"><a class="fav" id="favSync" href="#">⭐ Actualizar precios SP</a></div></li>
         <li>Entrá a D&amp;D Soft con tu usuario.</li>
         <li>Tocá el favorito <b>Actualizar precios SP</b>, poné tu usuario y clave de esta app, y esperá a que diga <b>Listo</b>.</li>
       </ol>
-      <div class="row"><button id="btnCopBm" class="pri">Copiar código</button><span class="mut" id="bmEstado"></span></div>
+      <details class="mut"><summary>¿No podés arrastrarlo?</summary><div class="row" style="margin-top:6px"><button id="btnCopBm">Copiar código</button><span id="bmEstado"></span></div></details>
     </div>
     <div class="box" id="corBox" hidden>
       <h2 style="font-size:20px;margin-bottom:4px">Datos del corralón para imprimir</h2>
@@ -445,6 +447,9 @@ $('#btnImprimir').addEventListener('click',async()=>{
   <div class="tt"><div>TOTAL ${fmt(total)}</div></div>
   ${cor.pie?`<div class="pie">${esc(cor.pie)}</div>`:''}`;
   const t=document.title;document.title='Presupuesto '+ped.id+(ped.cliente?' - '+ped.cliente:'');setTimeout(()=>{window.print();document.title=t},150)});
+
+$('#favDD').href=BMDD;$('#favSync').href=BM;
+document.querySelectorAll('.fav').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();toast('No lo toques: arrastralo a la barra de favoritos')}));
 
 /* ---------- vistas ---------- */
 function ver(v){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));['nuevo','historial','datos','usuarios'].forEach(x=>$('#v-'+x).hidden=x!==v);
